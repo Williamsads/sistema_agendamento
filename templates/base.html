@@ -16,20 +16,18 @@
     <nav class="navbar">
         <a href="{{ url_for('dashboard') }}" class="navbar-brand">
             <div
-                style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #ec4899); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                style="width: 42px; height: 42px; background: var(--accent-yellow); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"></path>
-                    <path d="M3 21h18"></path>
-                    <path d="M9 7h1"></path>
-                    <path d="M9 11h1"></path>
-                    <path d="M9 15h1"></path>
-                    <path d="M14 7h1"></path>
-                    <path d="M14 11h1"></path>
-                    <path d="M14 15h1"></path>
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
             </div>
-            SARA
+            <div style="display: flex; flex-direction: column; line-height: 1;">
+                <span style="font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;">SARA</span>
+                <span
+                    style="font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: var(--accent-yellow); letter-spacing: 1px;">Pernambuco</span>
+            </div>
         </a>
         <div class="nav-links">
             {% if current_user.is_authenticated %}
@@ -52,8 +50,8 @@
         {% if messages %}
         <div style="margin-bottom: 2rem;">
             {% for category, message in messages %}
-            <div
-                style="padding: 1rem 1.5rem; border-radius: 1rem; background: {{ 'rgba(16, 185, 129, 0.1)' if category == 'success' else 'rgba(239, 68, 68, 0.1)' }}; border: 1px solid {{ 'var(--success)' if category == 'success' else 'var(--danger)' }}; color: {{ 'var(--success)' if category == 'success' else 'var(--danger)' }}; margin-bottom: 0.75rem; font-weight: 500;">
+            <div class="flash-message {{ category }}"
+                style="padding: 1rem 1.5rem; border-radius: 1rem; margin-bottom: 0.75rem; font-weight: 500; border: 1px solid transparent;">
                 {{ message }}
             </div>
             {% endfor %}

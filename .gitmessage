@@ -1,0 +1,26 @@
+# <tipo>: <descrição curta>
+#
+# <descrição detalhada (opcional)>
+#
+# Tipos permitidos:
+#   feat:     Nova funcionalidade
+#   fix:      Correção de bug
+#   docs:     Mudanças na documentação
+#   style:    Formatação, ponto e vírgula faltando, etc; sem mudança de código
+#   refactor: Refatoração de código
+#   perf:     Melhoria de performance
+#   test:     Adição ou correção de testes
+#   chore:    Atualização de tarefas de build, configurações, etc
+#   deploy:   Deploy ou configuração de produção
+#
+# Exemplos:
+#   feat: Adiciona sistema de notificações por email
+#   fix: Corrige erro ao salvar reserva recorrente
+#   docs: Atualiza README com instruções de instalação
+#   refactor: Reorganiza estrutura de pastas do projeto
+#
+# Lembre-se:
+# - Use o imperativo ("Adiciona" não "Adicionado" ou "Adicionando")
+# - Primeira linha com no máximo 50 caracteres
+# - Deixe uma linha em branco antes da descrição detalhada
+# - Descrição detalhada com no máximo 72 caracteres por linha

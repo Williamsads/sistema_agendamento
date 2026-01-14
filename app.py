@@ -7,6 +7,7 @@ from functools import wraps
 import os
 import pytz
 import uuid
+import calendar
 
 app = Flask(__name__)
 
@@ -144,11 +145,20 @@ def reservar():
             conflitos = []
 
             for i in range(qtd_repeticoes):
-                delta_days = 0
-                if tipo_recorrencia == 'semanal': delta_days = i * 7
-                elif tipo_recorrencia == 'quinzenal': delta_days = i * 14
-                
-                nova_data = data_base + timedelta(days=delta_days)
+                if tipo_recorrencia == 'mensal':
+                    # Lógica para Pular meses corretamente
+                    new_month = data_base.month + i
+                    new_year = data_base.year + (new_month - 1) // 12
+                    new_month = (new_month - 1) % 12 + 1
+                    # Garante que o dia seja válido para o mês (ex: 31 de Jan -> 28 de Fev)
+                    last_day = calendar.monthrange(new_year, new_month)[1]
+                    new_day = min(data_base.day, last_day)
+                    nova_data = datetime(new_year, new_month, new_day).date()
+                else:
+                    delta_days = 0
+                    if tipo_recorrencia == 'semanal': delta_days = i * 7
+                    elif tipo_recorrencia == 'quinzenal': delta_days = i * 14
+                    nova_data = data_base + timedelta(days=delta_days)
                 
                 inicio_dt = fuso.localize(datetime.combine(nova_data, hora_inicio))
                 fim_dt = fuso.localize(datetime.combine(nova_data, hora_fim))

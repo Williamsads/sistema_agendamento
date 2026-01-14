@@ -74,6 +74,39 @@
                 box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
             }
         }
+
+        /* Animações Premium */
+        @keyframes modalShow {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes backdropFade {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+
+            to {
+                opacity: 1;
+                backdrop-filter: blur(8px);
+            }
+        }
+
+        .animate-modal {
+            animation: modalShow 0.3s ease-out forwards;
+        }
+
+        .animate-backdrop {
+            animation: backdropFade 0.3s ease-out forwards;
+        }
     </style>
 </head>
 

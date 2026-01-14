@@ -145,28 +145,42 @@
                                 </div>
                             </td>
                             <td class="py-4 px-6 text-right">
-                                {% if usuario.id != current_user.id %}
-                                <form action="{{ url_for('admin.gerenciar_usuarios') }}" method="POST"
-                                    style="display: inline;"
-                                    onsubmit="return confirm('Tem certeza que deseja excluir o usuário {{ usuario.username }}?')">
-                                    <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="user_id" value="{{ usuario.id }}">
-                                    <button type="submit"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors border-0 cursor-pointer">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button type="button"
+                                        onclick="openEditModal('{{ usuario.id }}', '{{ usuario.username }}', '{{ usuario.is_admin|lower }}')"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors border-0 cursor-pointer">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
                                             stroke-linejoin="round">
-                                            <polyline points="3 6 5 6 21 6"></polyline>
-                                            <path
-                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                                            </path>
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                         </svg>
-                                        Excluir
+                                        Editar
                                     </button>
-                                </form>
-                                {% else %}
-                                <span class="text-xs text-slate-400 font-medium italic">Atual</span>
-                                {% endif %}
+
+                                    {% if usuario.id != current_user.id %}
+                                    <form action="{{ url_for('admin.gerenciar_usuarios') }}" method="POST"
+                                        style="display: inline;"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir o usuário {{ usuario.username }}?')">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-colors border-0 cursor-pointer">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path
+                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                </path>
+                                            </svg>
+                                            Excluir
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-xs text-slate-400 font-medium italic px-3">Atual</span>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -176,5 +190,148 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de Edição Ultra-Premium -->
+<div id="editModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Backdrop com Blur Animado -->
+        <div id="modalBackdrop" class="fixed inset-0 bg-slate-900/40 transition-opacity" aria-hidden="true"
+            onclick="closeEditModal()"></div>
+
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <!-- Conteúdo do Modal Animado -->
+        <div id="modalContent"
+            class="inline-block align-bottom bg-white rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100/50">
+            <div class="bg-white p-8 md:p-12">
+                <div class="flex justify-between items-center mb-10">
+                    <div class="flex items-center gap-5">
+                        <div
+                            class="w-14 h-14 bg-primary/5 rounded-[1.25rem] flex items-center justify-center text-primary">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-800 tracking-tight leading-tight">Perfil de Acesso
+                            </h3>
+                            <p class="text-sm text-slate-500 font-medium tracking-wide">Ajuste as permissões do sistema
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="closeEditModal()"
+                        class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all border-0 bg-transparent cursor-pointer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <form action="{{ url_for('admin.gerenciar_usuarios') }}" method="POST" class="space-y-8 text-left">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="user_id" id="edit_user_id">
+
+                    <div class="space-y-2">
+                        <label
+                            class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Usuário</label>
+                        <input type="text" name="username" id="edit_username"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-slate-700 font-bold placeholder-slate-400"
+                            required placeholder="Nome identificador">
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-end px-1">
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Nova
+                                Senha</label>
+                            <span
+                                class="bg-amber-100 text-amber-700 text-[8px] font-black px-2 py-0.5 rounded-full tracking-tighter shadow-sm border border-amber-200/50">OPCIONAL</span>
+                        </div>
+                        <input type="password" name="password"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-slate-700 font-bold placeholder-slate-300"
+                            placeholder="Deixe vazio para manter atual">
+                    </div>
+
+                    <div class="space-y-4" id="edit_admin_section">
+                        <label
+                            class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Permissão
+                            Administrativa</label>
+                        <div class="relative">
+                            <select name="is_admin" id="edit_is_admin"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-slate-700 font-bold appearance-none cursor-pointer">
+                                <option value="false">Usuário Padrão</option>
+                                <option value="true">Administrador</option>
+                            </select>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 pt-6">
+                        <button type="button" onclick="closeEditModal()"
+                            class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-4.5 rounded-2xl transition-all border-0 cursor-pointer text-[11px] uppercase tracking-widest">
+                            Voltar
+                        </button>
+                        <button type="submit"
+                            class="flex-[1.8] bg-primary hover:bg-[#1e3a8a] text-white font-black py-4.5 px-8 rounded-2xl transition-all hover:scale-[1.03] hover:-translate-y-1 shadow-2xl shadow-primary/20 border-0 cursor-pointer text-[11px] uppercase tracking-widest active:scale-95">
+                            Confirmar Ajustes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    function openEditModal(id, username, isAdmin) {
+        document.getElementById('edit_user_id').value = id;
+        document.getElementById('edit_username').value = username;
+        document.getElementById('edit_is_admin').value = isAdmin;
+
+        // Proteção de Auto-Edição de Admin
+        const isCurrentUser = id === '{{ current_user.id }}';
+        const adminSection = document.getElementById('edit_admin_section');
+        if (isCurrentUser) {
+            adminSection.style.opacity = '0.4';
+            adminSection.style.pointerEvents = 'none';
+            adminSection.title = "Você não pode revogar seu próprio acesso Admin por aqui.";
+        } else {
+            adminSection.style.opacity = '1';
+            adminSection.style.pointerEvents = 'auto';
+        }
+
+        // Inicia Animações Premium
+        const modal = document.getElementById('editModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const content = document.getElementById('modalContent');
+
+        modal.classList.remove('hidden');
+        backdrop.classList.add('animate-backdrop');
+        content.classList.add('animate-modal');
+
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('editModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const content = document.getElementById('modalContent');
+
+        // Fade out suave antes de fechar (opcional, mas pro simples vamos apenas fechar)
+        modal.classList.add('hidden');
+        backdrop.classList.remove('animate-backdrop');
+        content.classList.remove('animate-modal');
+        document.body.style.overflow = 'auto';
+    }
+</script>
 {% endblock %}

@@ -26,6 +26,26 @@ def gerenciar_usuarios():
                 db.session.add(novo_usuario)
                 db.session.commit()
                 flash('Usuário criado com sucesso!', 'success')
+        
+        elif action == 'update':
+            user_id = request.form.get('user_id')
+            username = request.form.get('username')
+            password = request.form.get('password')
+            is_admin = request.form.get('is_admin') == 'true'
+            
+            usuario = Usuario.query.get(user_id)
+            if usuario:
+                existing_user = Usuario.query.filter_by(username=username).first()
+                if existing_user and existing_user.id != usuario.id:
+                    flash('Nome de usuário já está em uso.', 'error')
+                else:
+                    usuario.username = username
+                    if password: # Só muda senha se preencher
+                        usuario.set_senha(password)
+                    if usuario.id != current_user.id:
+                        usuario.is_admin = is_admin
+                    db.session.commit()
+                    flash('Usuário atualizado com sucesso!', 'success')
                 
         elif action == 'delete':
             user_id = request.form.get('user_id')

@@ -1,71 +1,134 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="text-align: center; margin-bottom: 4rem;">
-    <h1>Painel de Ocupação</h1>
-    <p class="subtitle">Acompanhe em tempo real a disponibilidade das salas de reunião do 4º Andar.</p>
+<!-- Hero Section with Date -->
+<div class="flex flex-col md:flex-row md:justify-between md:items-end mb-12 gap-6">
+    <div>
+        <h1 class="text-3xl md:text-6xl font-extrabold tracking-tight text-primary mb-2">Painel de Salas</h1>
+        <p class="text-base md:text-lg text-slate-500 font-medium">Gestão inteligente de espaços em tempo real.</p>
+    </div>
+    <div class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-right shadow-sm min-w-[180px]">
+        <div class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">Hoje, <span
+                id="current-time">00:00:00</span></div>
+        <div class="text-xl font-bold text-slate-700" id="current-date">--/--</div>
+    </div>
 </div>
 
-<div class="rooms-grid">
+<!-- Grid de Salas -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for sala in status_salas %}
-    <div class="room-card {{ 'busy' if sala.ocupada else 'free' }}">
-        <div class="room-header">
-            <span class="room-number">{{ sala.info.nome }}</span>
-            <span class="badge {{ 'badge-busy' if sala.ocupada else 'badge-free' }}">
+    <div
+        class="group relative bg-white rounded-2xl border border-slate-200 p-6 transition-all hover:shadow-xl hover:border-primary/20">
+
+        <!-- Status Badge (Absolute Top Right) -->
+        <div class="absolute top-6 right-6 flex items-center gap-2">
+            <span class="relative flex h-3 w-3">
+                {% if sala.ocupada %}
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                {% else %}
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                {% endif %}
+            </span>
+            <span class="text-xs font-bold uppercase tracking-wider
+                {{ 'text-red-500' if sala.ocupada else 'text-emerald-500' }}">
                 {{ 'Ocupada' if sala.ocupada else 'Disponível' }}
             </span>
         </div>
 
-        <div class="room-details">
-            <div class="detail-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        <!-- Header -->
+        <div class="mb-6">
+            <div class="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
                 </svg>
-                {{ sala.info.andar }}
+                <span>{{ sala.info.andar or '4º Andar' }}</span>
             </div>
+            <h3 class="text-2xl font-bold text-slate-800">{{ sala.info.nome }}</h3>
+        </div>
 
+        <!-- Info Area -->
+        <div class="mb-6 h-20">
             {% if sala.ocupada and sala.reserva_atual %}
-            <div class="detail-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <strong>Responsável:</strong> {{ sala.reserva_atual.nome_solicitante }}
-            </div>
-            <div class="detail-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <strong>Assunto:</strong> {{ sala.reserva_atual.assunto }}
-            </div>
-            <div class="detail-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <strong>Até:</strong> {{ sala.reserva_atual.hora_fim.strftime('%H:%M') }}
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-1.5 bg-white rounded-lg text-red-500 shadow-sm">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-[0.65rem] font-bold text-slate-400 uppercase">Até às</p>
+                        <p class="text-sm font-bold text-slate-700 leading-none">{{
+                            sala.reserva_atual.fim.strftime('%H:%M') }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-[0.65rem] font-bold text-slate-400 uppercase">Por</p>
+                    <p class="text-sm font-bold text-slate-700 leading-none truncate max-w-[80px]">{{
+                        sala.reserva_atual.nome_solicitante }}</p>
+                </div>
             </div>
             {% else %}
             <div
-                style="margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; text-align: center; border: 1px dashed #cbd5e1;">
-                <span style="color: var(--text-muted); font-size: 0.85rem;">Nenhuma reunião em andamento</span>
+                class="h-full flex items-center gap-3 text-slate-400 bg-slate-50/50 rounded-xl p-3 border border-dashed border-slate-200">
+                <div class="p-1.5 bg-emerald-50 rounded-lg text-emerald-500">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium">Livre para agendar</span>
             </div>
             {% endif %}
         </div>
 
+        <!-- Action Button -->
         <a href="{{ url_for('reservar', sala_id=sala.info.id) }}"
-            class="btn {{ 'btn-ghost' if sala.ocupada else 'btn-primary' }}" style="width: 100%;">
-            {{ 'Ver Agendamentos' if sala.ocupada else 'Reservar Agora' }}
+            class="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-bold text-sm transition-all
+            {{ 'bg-slate-100 text-slate-600 hover:bg-slate-200' if sala.ocupada else 'bg-primary text-white hover:bg-[#1e3a8a] shadow-md shadow-primary/10 hover:shadow-lg hover:-translate-y-0.5' }}">
+            {% if sala.ocupada %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span>Ver Detalhes</span>
+            {% else %}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Nova Reserva</span>
+            {% endif %}
         </a>
     </div>
     {% endfor %}
 </div>
+
+<script>
+    function updateDateTime() {
+        const now = new Date();
+
+        // Update Date
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long' };
+        const dateStr = now.toLocaleDateString('pt-BR', dateOptions);
+        document.getElementById('current-date').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+
+        // Update Time
+        const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.getElementById('current-time').textContent = timeStr;
+    }
+
+    // Update immediately and then every second
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+</script>
 {% endblock %}

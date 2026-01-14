@@ -3,55 +3,306 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SARA | Governo de Pernambuco</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0C2856',
+                        'accent-yellow': '#FFCE00',
+                        'accent-orange': '#FF6700',
+                        'accent-red': '#ED282C',
+                        'accent-green': '#97E53C',
+                        'bg-main': '#f8fafc',
+                        'bg-card': '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(12, 40, 86, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 206, 0, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
-<body>
-    <nav class="navbar">
-        <a href="{{ url_for('dashboard') }}" class="navbar-brand">
-            <div
-                style="width: 42px; height: 42px; background: var(--accent-yellow); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5"
+<body class="text-slate-800 antialiased font-sans">
+    <nav class="bg-primary px-4 md:px-8 py-4 border-b-4 border-accent-yellow sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="{{ url_for('dashboard') }}"
+                class="flex items-center gap-3 text-white no-underline group hover:opacity-95">
+                <div
+                    class="w-10 h-10 md:w-11 md:h-11 bg-accent-yellow rounded-xl flex items-center justify-center shadow-md transition-transform group-hover:scale-105">
+                    <!-- Logo SalaGest Image -->
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo SalaGest"
+                        class="w-full h-full object-contain p-1">
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-xl md:text-2xl font-extrabold tracking-tight">SalaGest</span>
+                    <span
+                        class="text-[0.55rem] md:text-[0.65rem] font-bold uppercase text-accent-yellow tracking-widest hidden sm:block">Secretaria
+                        de Saúde do Estado de Pernambuco</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex gap-6 items-center">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}"
+                    class="flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-accent-yellow transition-colors relative py-1 {{ 'text-accent-yellow border-b-2 border-accent-yellow' if request.endpoint == 'dashboard' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="9" y1="21" x2="9" y2="9" />
+                    </svg>
+                    Painel de Salas
+                </a>
+                <a href="{{ url_for('reservar') }}"
+                    class="flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-accent-yellow transition-colors relative py-1 {{ 'text-accent-yellow border-b-2 border-accent-yellow' if request.endpoint == 'reservar' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="16" y1="11" x2="22" y2="11" />
+                    </svg>
+                    Nova Reserva
+                </a>
+                <a href="{{ url_for('lista_reservas') }}"
+                    class="flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-accent-yellow transition-colors relative py-1 {{ 'text-accent-yellow border-b-2 border-accent-yellow' if request.endpoint == 'lista_reservas' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 2v4" />
+                        <path d="M16 2v4" />
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <path d="M3 10h18" />
+                        <path d="M8 14h.01" />
+                        <path d="M12 14h.01" />
+                        <path d="M16 14h.01" />
+                        <path d="M8 18h.01" />
+                        <path d="M12 18h.01" />
+                        <path d="M16 18h.01" />
+                    </svg>
+                    Agendamentos
+                </a>
+                {% if current_user.is_admin %}
+                <a href="{{ url_for('gerenciar_salas') }}"
+                    class="flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-accent-yellow transition-colors relative py-1 {{ 'text-accent-yellow border-b-2 border-accent-yellow' if request.endpoint == 'gerenciar_salas' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    Salas
+                </a>
+                <a href="{{ url_for('gerenciar_usuarios') }}"
+                    class="flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-accent-yellow transition-colors relative py-1 {{ 'text-accent-yellow border-b-2 border-accent-yellow' if request.endpoint == 'gerenciar_usuarios' }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    Usuários
+                </a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}"
+                    class="flex items-center gap-2 text-red-200 ml-4 text-sm font-semibold hover:text-red-100 transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Sair
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}"
+                    class="flex items-center gap-2 text-white/80 text-sm font-semibold hover:text-accent-yellow transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                    Entrar
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-toggle"
+                class="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
-            </div>
-            <div style="display: flex; flex-direction: column; line-height: 1;">
-                <span style="font-size: 1.35rem; font-weight: 800; color: white; letter-spacing: -0.5px;"></span>
-                <span
-                    style="font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: var(--accent-yellow); letter-spacing: 1px;">Gestão
-                    de Salas</span>
-            </div>
-        </a>
-        <div class="nav-links">
-            {% if current_user.is_authenticated %}
-            <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Dashboard</a>
-            <a href="{{ url_for('reservar') }}" class="{{ 'active' if request.endpoint == 'reservar' }}">Nova
-                Reserva</a>
-            <a href="{{ url_for('lista_reservas') }}"
-                class="{{ 'active' if request.endpoint == 'lista_reservas' }}">Agendamentos</a>
-            <a href="{{ url_for('gerenciar_usuarios') }}"
-                class="{{ 'active' if request.endpoint == 'gerenciar_usuarios' }}">Usuários</a>
-            <a href="{{ url_for('logout') }}" style="color: #ffcccc; margin-left: 1rem;">Sair</a>
-            {% else %}
-            <a href="{{ url_for('login') }}" class="{{ 'active' if request.endpoint == 'login' }}">Entrar</a>
-            {% endif %}
+            </button>
         </div>
     </nav>
 
-    <div class="container animate-fade">
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-drawer" class="fixed inset-0 z-[60] lg:hidden hidden">
+        <div id="drawer-overlay" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div id="drawer-content"
+            class="absolute right-0 top-0 bottom-0 w-72 bg-primary shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                <span class="text-white font-bold">Navegação</span>
+                <button id="close-drawer" class="text-white/70 hover:text-white p-1">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/5 hover:text-white transition-all {{ 'bg-accent-yellow !text-primary font-bold' if request.endpoint == 'dashboard' }}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="9" y1="21" x2="9" y2="9" />
+                    </svg>
+                    Painel de Salas
+                </a>
+                <a href="{{ url_for('reservar') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/5 hover:text-white transition-all {{ 'bg-accent-yellow !text-primary font-bold' if request.endpoint == 'reservar' }}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="16" y1="11" x2="22" y2="11" />
+                    </svg>
+                    Nova Reserva
+                </a>
+                <a href="{{ url_for('lista_reservas') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/5 hover:text-white transition-all {{ 'bg-accent-yellow !text-primary font-bold' if request.endpoint == 'lista_reservas' }}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="18" height="18" x="3" y="4" rx="2" />
+                        <path d="M3 10h18" />
+                        <path d="M8 2v4" />
+                        <path d="M16 2v4" />
+                    </svg>
+                    Agendamentos
+                </a>
+
+                {% if current_user.is_admin %}
+                <div class="pt-4 mt-4 border-t border-white/10">
+                    <p class="px-4 text-[0.6rem] font-bold uppercase tracking-widest text-white/30 mb-4">Administração
+                    </p>
+                    <a href="{{ url_for('gerenciar_salas') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/5 hover:text-white transition-all {{ 'bg-accent-yellow !text-primary font-bold' if request.endpoint == 'gerenciar_salas' }}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                        Salas
+                    </a>
+                    <a href="{{ url_for('gerenciar_usuarios') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/70 hover:bg-white/5 hover:text-white transition-all {{ 'bg-accent-yellow !text-primary font-bold' if request.endpoint == 'gerenciar_usuarios' }}">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                        </svg>
+                        Usuários
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="pt-4 mt-auto border-t border-white/10">
+                    <a href="{{ url_for('logout') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-all">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        Sair
+                    </a>
+                </div>
+                {% else %}
+                <a href="{{ url_for('login') }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent-yellow text-primary font-bold">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                    Entrar
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto my-12 px-4 md:px-8 animate-fade">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        <div style="margin-bottom: 2rem;">
+        <div class="mb-8 space-y-3">
             {% for category, message in messages %}
-            <div class="flash-message {{ category }}"
-                style="padding: 1rem 1.5rem; border-radius: 1rem; margin-bottom: 0.75rem; font-weight: 500; border: 1px solid transparent;">
+            <div
+                class="flash-msg flex items-center gap-3 px-6 py-4 rounded-2xl font-medium border text-sm shadow-md transition-all duration-500
+                {{ 'bg-green-50 text-green-700 border-green-200' if category == 'success' else 'bg-red-50 text-red-700 border-red-200' }}">
+                {% if category == 'success' %}
+                <div class="bg-green-500 rounded-full p-1 scroll-p-0.5">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </div>
+                {% else %}
+                <div class="bg-red-500 rounded-full p-1 text-white">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                        <circle cx="12" cy="12" r="10" />
+                    </svg>
+                </div>
+                {% endif %}
                 {{ message }}
             </div>
             {% endfor %}
@@ -63,16 +314,47 @@
     </div>
 
     <script>
-        // Smooth fade in for flash messages
+        // Mobile Menu Toggle Logic
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const drawerContent = document.getElementById('drawer-content');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        const closeDrawer = document.getElementById('close-drawer');
+
+        function openMenu() {
+            mobileDrawer.classList.remove('hidden');
+            setTimeout(() => {
+                drawerContent.classList.remove('translate-x-full');
+            }, 10);
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeMenu() {
+            drawerContent.classList.add('translate-x-full');
+            setTimeout(() => {
+                mobileDrawer.classList.add('hidden');
+            }, 300);
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', openMenu);
+            drawerOverlay.addEventListener('click', closeMenu);
+            closeDrawer.addEventListener('click', closeMenu);
+        }
+
+        // Smooth fade out for flash messages
         setTimeout(() => {
-            const flashes = document.querySelectorAll('.flash-messages');
+            const flashes = document.querySelectorAll('.flash-msg'); // Targeted selector
             flashes.forEach(f => {
                 f.style.opacity = '0';
-                f.style.transition = 'opacity 0.5s';
+                f.style.transform = 'translateY(-10px)';
+                f.style.transition = 'all 0.5s';
                 setTimeout(() => f.remove(), 500);
             });
-        }, 4000);
+        }, 5000);
     </script>
+    {% block scripts %}{% endblock %}
 </body>
 
 </html>

@@ -1,70 +1,118 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="text-align: center; margin-bottom: 3rem;">
-    <h1>Agendar Reunião</h1>
-    <p class="subtitle">Garanta seu espaço com apenas alguns cliques.</p>
+<div class="text-center mb-12">
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-primary">Agendar Reunião</h1>
+    <p class="text-lg text-slate-500 max-w-2xl mx-auto">Garanta seu espaço com apenas alguns cliques.</p>
 </div>
 
-<div class="form-container">
-    <form action="{{ url_for('reservar') }}" method="POST">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <div class="form-group">
-                <label class="form-label">Sala</label>
-                <select name="sala_id" class="form-input" required>
-                    {% for sala in salas %}
-                    <option value="{{ sala.id }}" {% if request.args.get('sala_id')|int==sala.id %}selected{% endif %}>
-                        {{ sala.nome }}
-                    </option>
-                    {% endfor %}
-                </select>
+<div class="max-w-4xl mx-auto bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-100">
+    <form action="{{ url_for('reservar') }}" method="POST" class="space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Sala</label>
+                <div class="relative">
+                    <select name="sala_id"
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 font-medium"
+                        required>
+                        {% for sala in salas %}
+                        <option value="{{ sala.id }}" {% if request.args.get('sala_id')|int==sala.id %}selected{% endif
+                            %}>
+                            {{ sala.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Data</label>
-                <input type="date" name="data" id="data_form" class="form-input" required>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Data</label>
+                <input type="date" name="data" id="data_form"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 font-medium"
+                    required>
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Assunto</label>
-            <input type="text" name="assunto" class="form-input" placeholder="Ex: Reunião de Alinhamento" required>
+        <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Assunto</label>
+            <input type="text" name="assunto"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 placeholder:text-slate-400"
+                placeholder="Ex: Reunião de Alinhamento" required>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Responsável</label>
-            <input type="text" name="nome_solicitante" class="form-input" placeholder="Seu nome completo" required>
+        <div class="space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Responsável</label>
+            <input type="text" name="nome_solicitante"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 placeholder:text-slate-400"
+                placeholder="Seu nome completo" required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <div class="form-group">
-                <label class="form-label">Setor</label>
-                <input type="text" name="setor" class="form-input" placeholder="Ex: TI" required>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Setor</label>
+                <input type="text" name="setor"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 placeholder:text-slate-400"
+                    placeholder="Ex: TI" required>
             </div>
-            <div class="form-group">
-                <label class="form-label">Telefone / Ramal</label>
-                <input type="text" name="telefone" class="form-input" placeholder="(00) 00000-0000" required>
-            </div>
-        </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-            <div class="form-group">
-                <label class="form-label">Início</label>
-                <input type="time" name="hora_inicio" class="form-input" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Término</label>
-                <input type="time" name="hora_fim" class="form-input" required>
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Telefone / Ramal</label>
+                <input type="text" name="telefone"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 placeholder:text-slate-400"
+                    placeholder="(00) 00000-0000" required>
             </div>
         </div>
 
-        <div style="display: flex; gap: 1rem;">
-            <button type="submit" class="btn btn-primary" style="flex: 2;">Confirmar Reserva</button>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-ghost" style="flex: 1;">Voltar</a>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 pb-2">
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Início</label>
+                <input type="time" name="hora_inicio"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 font-medium"
+                    required>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Término</label>
+                <input type="time" name="hora_fim"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-slate-700 font-medium"
+                    required>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 pt-4">
+            <button type="submit"
+                class="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-[#1e3a8a] text-white font-bold py-4 rounded-xl transition-all hover:-translate-y-1 shadow-xl shadow-primary/20">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>Confirmar Reserva</span>
+            </button>
+            <a href="{{ url_for('dashboard') }}"
+                class="px-8 flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-4 rounded-xl transition-all">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+                <span>Voltar</span>
+            </a>
         </div>
     </form>
 </div>
 
 <script>
-    document.getElementById('data_form').valueAsDate = new Date();
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    document.getElementById('data_form').value = `${year}-${month}-${day}`;
 </script>
 {% endblock %}

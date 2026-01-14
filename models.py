@@ -2,8 +2,13 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import pytz
 
 db = SQLAlchemy()
+
+def get_now_br():
+    """Retorna o datetime atual no fuso horário de Brasília/Recife."""
+    return datetime.now(pytz.timezone('America/Recife'))
 
 class Usuario(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,7 +43,7 @@ class Reserva(db.Model):
     telefone = db.Column(db.String(20), nullable=False)
     inicio = db.Column(db.DateTime, nullable=False)
     fim = db.Column(db.DateTime, nullable=False)
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    data_criacao = db.Column(db.DateTime, default=get_now_br)
 
     def __repr__(self):
         return f'<Reserva {self.assunto} em {self.inicio}>'

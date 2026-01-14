@@ -5,6 +5,7 @@ from sqlalchemy import or_, and_
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from functools import wraps
 import os
+import pytz
 
 app = Flask(__name__)
 
@@ -25,6 +26,10 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
+
+def get_now_br():
+    """Retorna o datetime atual no fuso horário de Brasília/Recife."""
+    return datetime.now(pytz.timezone('America/Recife'))
 
 def admin_required(f):
     @wraps(f)
@@ -78,7 +83,7 @@ def logout():
 @login_required
 def dashboard():
     salas = Sala.query.order_by(Sala.ordem).all()
-    agora = datetime.now()
+    agora = get_now_br()
     
     status_salas = []
     for sala in salas:
@@ -120,9 +125,10 @@ def reservar():
             hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
             hora_fim = datetime.strptime(hora_fim_str, '%H:%M').time()
 
-            # Combina data e hora
-            inicio_dt = datetime.combine(data_base, hora_inicio)
-            fim_dt = datetime.combine(data_base, hora_fim)
+            # Combina data e hora (assume fuso de Recife para a entrada)
+            fuso = pytz.timezone('America/Recife')
+            inicio_dt = fuso.localize(datetime.combine(data_base, hora_inicio))
+            fim_dt = fuso.localize(datetime.combine(data_base, hora_fim))
 
             # Lógica para "virada de noite": se fim <= inicio, assume dia seguinte
             if fim_dt <= inicio_dt:
@@ -189,7 +195,7 @@ def lista_reservas():
 
     # Filtro de Status
     status = request.args.get('status')
-    agora = datetime.now()
+    agora = get_now_br()
     
     if status == 'agora':
         query = query.filter(Reserva.inicio <= agora, Reserva.fim >= agora)
@@ -203,7 +209,7 @@ def lista_reservas():
     
     # Dados para o filtro
     salas = Sala.query.order_by(Sala.nome).all()
-    agora = datetime.now()
+    agora = get_now_br()
     
     return render_template('reservas.html', reservas=reservas, salas=salas, agora=agora)
 

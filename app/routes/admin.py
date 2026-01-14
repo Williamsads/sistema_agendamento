@@ -35,6 +35,15 @@ def gerenciar_usuarios():
                 db.session.commit()
                 flash('Usuário removido com sucesso!', 'success')
                 
+        elif action == 'toggle_admin':
+            user_id = request.form.get('user_id')
+            usuario = Usuario.query.get(user_id)
+            if usuario and usuario.id != current_user.id:
+                usuario.is_admin = not usuario.is_admin
+                db.session.commit()
+                nivel = "Administrador" if usuario.is_admin else "Usuário Padrão"
+                flash(f'Permissão de {usuario.username} alterada para {nivel}.', 'success')
+                
     usuarios = Usuario.query.all()
     return render_template('usuarios.html', usuarios=usuarios)
 
